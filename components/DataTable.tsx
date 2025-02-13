@@ -1,8 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
+type Trip = {
+    vendor_id: string;
+    pickup_datetime: string;
+    dropoff_datetime: string;
+    trip_distance: number;
+    fare_amount: number;
+    payment_type: string;
+  };
+  
+
 
 export default function DataTable() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -121,7 +131,9 @@ export default function DataTable() {
                       {formatDate(trip.dropoff_datetime)}
                     </td>
                     <td className="border p-2 text-center">
-                      {parseFloat(trip.trip_distance).toFixed(2)}
+                    {Number(trip.trip_distance).toFixed(2)}
+
+
                     </td>
                     <td className="border p-2 text-center">${trip.fare_amount}</td>
                     <td className="border p-2 text-center">{trip.payment_type}</td>

@@ -1,7 +1,7 @@
 "use client"; // Wajib untuk Next.js App Router
 
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import dynamic from "next/dynamic";
 

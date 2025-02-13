@@ -12,14 +12,19 @@ export default function Routing() {
   const map = useMap();
 
   useEffect(() => {
-    if (!map) return;
+    if (!map) return; // Menghindari error jika map belum tersedia
 
     const routingControl = L.Routing.control({
       waypoints: [L.latLng(57.74, 11.94), L.latLng(57.6792, 11.949)],
       routeWhileDragging: true
     }).addTo(map);
 
-    return () => map.removeControl(routingControl);
+    // Mengembalikan fungsi cleanup secara eksplisit
+    return () => {
+      if (map && routingControl) {
+        map.removeControl(routingControl);
+      }
+    };
   }, [map]);
 
   return null;
