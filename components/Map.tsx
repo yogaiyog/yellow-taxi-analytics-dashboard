@@ -1,35 +1,39 @@
-"use client"; // Wajib untuk Next.js App Router
-
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import dynamic from "next/dynamic";
+import { Trip } from "@/types/type";
 
-// Dynamic import agar hanya dijalankan di client-side
+// Dynamic import untuk RoutingMachine
 const RoutingMachine = dynamic(() => import("./RoutingMachine"), { ssr: false });
 
-export default function Map() {
-  const [loaded, setLoaded] = useState(false);
+interface MapProps {
+  selectedTrip: Trip | null;
+}
+
+export default function Map({ selectedTrip }: MapProps) {
+  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
-    setLoaded(true); // Pastikan komponen dimuat setelah browser tersedia
+    setMapReady(true);
   }, []);
 
   return (
     <div className="h-[500px] w-1/2 bg-white">
-      {loaded && (
-        <MapContainer center={[-6.2088, 106.8456]} zoom={7} scrollWheelZoom={false} className="h-full">
+      {mapReady && (
+        <MapContainer
+          center={[-6.2088, 106.8456]}
+          zoom={20}
+          scrollWheelZoom={false}
+          className="h-full"
+        >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
-          <Marker position={[-6.2088, 106.8456]}>
-            <Popup>Jakarta, Indonesia</Popup>
-          </Marker>
-          <Marker position={[-6.9175, 107.6191]}>
-            <Popup>Bandung, Indonesia</Popup>
-          </Marker>
-          <RoutingMachine />
+          {selectedTrip?.pickup_latitude && selectedTrip?.dropoff_latitude && (
+            <RoutingMachine selectedTrip={selectedTrip} />
+          )}
         </MapContainer>
       )}
     </div>

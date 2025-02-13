@@ -1,17 +1,9 @@
-"use client";
+import { DataTableProps, Trip } from "@/types/type";
 import { useEffect, useState } from "react";
-type Trip = {
-    vendor_id: string;
-    pickup_datetime: string;
-    dropoff_datetime: string;
-    trip_distance: number;
-    fare_amount: number;
-    payment_type: string;
-  };
-  
 
 
-export default function DataTable() {
+
+export default function DataTable({ onTripSelect }: DataTableProps) {
   const [data, setData] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +47,6 @@ export default function DataTable() {
 
   const totalPages = Math.ceil(totalRecords / limit);
 
-  // Format waktu agar lebih mudah dibaca
   const formatDate = (datetime: string) => {
     return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
@@ -68,14 +59,10 @@ export default function DataTable() {
     }).format(new Date(datetime));
   };
 
-  // Ubah underscore menjadi spasi
   const formatSortByLabel = (text: string) => text.replace(/_/g, " ");
 
   return (
-    <div className="min-h-screen p-8 sm:p-20">
-      
-      <h1 className="text-2xl font-bold mb-6 text-center">Yellow Taxi Trips</h1>
-
+    <div>
       {loading && <p className="text-center">Loading...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}
 
@@ -103,7 +90,6 @@ export default function DataTable() {
             </button>
           </div>
 
-          {/* Table */}
           <div className="overflow-x-auto">
             <table className="min-w-full border-collapse border border-gray-300">
               <thead>
@@ -111,7 +97,6 @@ export default function DataTable() {
                   <th className="border p-2">No</th>
                   <th className="border p-2">Vendor</th>
                   <th className="border p-2">Pickup Time</th>
-                  <th className="border p-2">Dropoff Time</th>
                   <th className="border p-2">Distance (miles)</th>
                   <th className="border p-2">Fare ($)</th>
                   <th className="border p-2">Payment</th>
@@ -119,7 +104,11 @@ export default function DataTable() {
               </thead>
               <tbody>
                 {data.map((trip, index) => (
-                  <tr key={index} className="hover:bg-gray-100">
+                  <tr
+                    key={index}
+                    className="hover:bg-gray-100 cursor-pointer"
+                    onClick={() => onTripSelect(trip)} // Kirim data ke parent saat diklik
+                  >
                     <td className="border p-2 text-center">
                       {(page - 1) * limit + index + 1}
                     </td>
@@ -128,12 +117,7 @@ export default function DataTable() {
                       {formatDate(trip.pickup_datetime)}
                     </td>
                     <td className="border p-2 text-center">
-                      {formatDate(trip.dropoff_datetime)}
-                    </td>
-                    <td className="border p-2 text-center">
-                    {Number(trip.trip_distance).toFixed(2)}
-
-
+                      {Number(trip.trip_distance).toFixed(2)}
                     </td>
                     <td className="border p-2 text-center">${trip.fare_amount}</td>
                     <td className="border p-2 text-center">{trip.payment_type}</td>
@@ -143,7 +127,6 @@ export default function DataTable() {
             </table>
           </div>
 
-          {/* Pagination Controls */}
           <div className="flex justify-center mt-6 gap-4">
             <button
               onClick={() => setPage((prev) => Math.max(1, prev - 1))}
